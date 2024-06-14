@@ -1,4 +1,4 @@
-package com.example.nativewebview2.model
+package com.example.nativewebview2.mvvm.model
 
 import android.util.Log
 import android.webkit.JavascriptInterface

@@ -1,6 +1,7 @@
-package com.example.nativewebview2.model
+package com.example.nativewebview2.clean.infrastructure.presentation.models
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
 import android.os.Handler
@@ -12,19 +13,15 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import com.example.nativewebview2.R
 import com.example.nativewebview2.databinding.ActivityMainBinding
+import com.example.nativewebview2.clean.domain.models.ActionTriggersDM
+import com.example.nativewebview2.clean.domain.usecases.ErrorMessageDU
 
-class WebModel(
+class WebViewIM(
     private val context: Context,
     binding: ActivityMainBinding?,
-    private val baseUrl: String,
-    private val callback: Callback
+    private val baseUrl: String
 ) {
     private var webView = binding?.webView
-
-    interface Callback {
-        fun onWebViewLoaded()
-        fun onWebViewFailed(message: String)
-    }
 
     private val webViewStartTimeout = 30000L
 
@@ -32,8 +29,7 @@ class WebModel(
 
     private var watchdogTriggered = Runnable {
         Log.d(this.javaClass.simpleName, "Watchdog triggered - Stopping loading and handling error")
-        webView?.stopLoading()
-        callback.onWebViewFailed("Timeout while loading URL: $baseUrl")
+        showErrorMessageAndQuit(context.getString(R.string.view_loading_timeout))
     }
 
     init {
@@ -61,17 +57,18 @@ class WebModel(
         }
     }
 
+    private fun showErrorMessageAndQuit(message: String) {
+        stop()
+        val builder = AlertDialog.Builder(context)
+        ErrorMessageDU.show(builder, ActionTriggersDM.finish, message)
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
-    fun startWebView() {
+    fun start() {
         webView?.let {
-            Log.d(
-                this.javaClass.simpleName, "<startWebView url: $baseUrl>"
-            )
-            val webViewClient = WebClient(WebClientCallback())
-            val webAppInterface = WebAppInterface()
-            webAppInterface.setWebAppInterfaceCallback(WebAppInterfaceCallback())
+            val webViewClient = WebClientIM(WebClientCallback())
             it.addJavascriptInterface(
-                webAppInterface, context.getString(R.string.view_javascript_interface)
+                WebAppItfIM(), context.getString(R.string.view_javascript_interface)
             )
             it.settings.javaScriptEnabled = true
             it.settings.domStorageEnabled = true
@@ -98,29 +95,28 @@ class WebModel(
 
             it.loadUrl(baseUrl)
 
-            Log.d(this.javaClass.simpleName, "</startWebView>")
+            Log.d(this.javaClass.simpleName, "</start>")
 
             startWatchdog()
         }
     }
 
-    fun stopWebView() {
+    fun stop() {
         stopWatchdog()
 
         webView?.let {
-            Log.d(this.javaClass.simpleName, "<stopWebView>")
+            Log.d(this.javaClass.simpleName, "<stop>")
             val parent = it.parent as ViewGroup?
             parent?.removeView(webView)
             it.stopLoading()
             it.removeJavascriptInterface(context.getString(R.string.view_javascript_interface))
             it.destroy()
-            Log.d(this.javaClass.simpleName, "</stopWebView>")
+            Log.d(this.javaClass.simpleName, "</stop>")
             webView = null
         }
-
     }
 
-    inner class WebClientCallback : WebClient.Callback {
+    inner class WebClientCallback : WebClientIM.Callback {
         override fun onPageStarted() {
             stopWatchdog()
         }
@@ -128,13 +124,7 @@ class WebModel(
         override fun onPageFinished(url: String) {}
 
         override fun onReceivedError() {
-            callback.onWebViewFailed(context.getString(R.string.view_on_received_error_message))
-        }
-    }
-
-    inner class WebAppInterfaceCallback : WebAppInterface.Callback {
-        override fun finishLoading() {
-            callback.onWebViewLoaded()
+            showErrorMessageAndQuit(context.getString(R.string.view_on_received_error_message))
         }
     }
 }

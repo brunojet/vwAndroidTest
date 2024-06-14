@@ -1,4 +1,4 @@
-package com.example.nativewebview2.ui.theme
+package com.example.nativewebview2.clean.infrastructure.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

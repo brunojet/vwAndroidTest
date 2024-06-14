@@ -4,6 +4,7 @@
     <string name="splash_count">Count: %1$d seconds.</string>
     <string name="splash_count_final">Count exceeded the maximum limit.</string>
     <string name="view_javascript_interface" translatable="false">ReactNativeWebView</string>
+    <string name="view_loading_timeout">Timeout exceeded while loading the page.</string>
     <string name="view_on_received_error_message">Please check your internet connection and try again.</string>
 
 </resources>

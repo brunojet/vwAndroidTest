@@ -1,4 +1,4 @@
-package com.example.nativewebview2.viewmodel
+package com.example.nativewebview2.mvvm.viewmodel
 
 import android.app.AlertDialog
 import android.util.Log

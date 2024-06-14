@@ -1,4 +1,4 @@
-package com.example.nativewebview2
+package com.example.nativewebview2.mvvm
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -10,9 +10,10 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
-import com.example.nativewebview2.viewmodel.ErrorViewModel
-import com.example.nativewebview2.viewmodel.WebViewModel
-import com.example.nativewebview2.viewmodel.SplashScreenViewModel
+import com.example.nativewebview2.R
+import com.example.nativewebview2.mvvm.viewmodel.ErrorViewModel
+import com.example.nativewebview2.mvvm.viewmodel.WebViewModel
+import com.example.nativewebview2.mvvm.viewmodel.SplashScreenViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

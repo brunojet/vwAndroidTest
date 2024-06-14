@@ -1,4 +1,4 @@
-package com.example.nativewebview2.model
+package com.example.nativewebview2.clean.infrastructure.presentation.models
 
 import android.graphics.Bitmap
 import android.util.Log
@@ -9,7 +9,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
-class WebClient(private val callback: Callback) : WebViewClient() {
+class WebClientIM(private val callback: Callback) : WebViewClient() {
     interface Callback {
         fun onPageStarted()
         fun onPageFinished(url: String)

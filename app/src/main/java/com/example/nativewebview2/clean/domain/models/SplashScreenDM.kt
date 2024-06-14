@@ -1,27 +1,26 @@
-package com.example.nativewebview2.model
+package com.example.nativewebview2.clean.domain.models
 
-import android.content.Context
+import android.app.AlertDialog
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.TextView
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.nativewebview2.R
+import com.example.nativewebview2.clean.domain.usecases.ErrorMessageDU
 
-class SplashScreenModel(
-    private val context: Context, private val callback: Callback, private val text: TextView
+class SplashScreenDM(
+    private val context: ComponentActivity,
+    private val text: TextView
 ) {
     private val handler = Handler(Looper.getMainLooper())
     private var showSplashScreen by mutableStateOf(false)
     private var ssCountUp by mutableIntStateOf(-1)
     private val maxCount = 120
-
-    interface Callback {
-        fun splashScreenFailed(message: String)
-    }
 
     private val splashRunnable = object : Runnable {
         override fun run() {
@@ -30,27 +29,32 @@ class SplashScreenModel(
                     text.text = context.getString(R.string.splash_count, ssCountUp)
                     handler.postDelayed(this, 1000)
                 } else {
-                    callback.splashScreenFailed(context.getString(R.string.splash_count_final))
+                    val builder = AlertDialog.Builder(context)
+                    ErrorMessageDU.show(
+                        builder,
+                        ActionTriggersDM.finish,
+                        context.getString(R.string.splash_count_final)
+                    )
                 }
             }
         }
     }
 
-    fun startSplashScreen() {
+    fun start() {
         if (!showSplashScreen) {
-            Log.d(this.javaClass.simpleName, "<startSplashScreen>")
+            Log.d(this.javaClass.simpleName, "<start>")
             ssCountUp = 0
             handler.post(splashRunnable)
-            Log.d(this.javaClass.simpleName, "</startSplashScreen>")
+            Log.d(this.javaClass.simpleName, "</start>")
             showSplashScreen = true
         }
     }
 
-    fun stopSplashScreen() {
+    fun stop() {
         if (showSplashScreen) {
-            Log.d(this.javaClass.simpleName, "<stopSplashScreen>")
+            Log.d(this.javaClass.simpleName, "<stop>")
             handler.removeCallbacks(splashRunnable)
-            Log.d(this.javaClass.simpleName, "</stopSplashScreen>")
+            Log.d(this.javaClass.simpleName, "</stop>")
             showSplashScreen = false
         }
     }

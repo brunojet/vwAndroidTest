@@ -1,4 +1,4 @@
-package com.example.nativewebview2.viewmodel
+package com.example.nativewebview2.mvvm.viewmodel
 
 import android.util.Log
 import android.view.View
@@ -6,7 +6,7 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import com.example.nativewebview2.R
-import com.example.nativewebview2.model.SplashScreenModel
+import com.example.nativewebview2.mvvm.model.SplashScreenModel
 import java.lang.ref.WeakReference
 
 class SplashScreenViewModel(context: ComponentActivity, private val callback: Callback) :
