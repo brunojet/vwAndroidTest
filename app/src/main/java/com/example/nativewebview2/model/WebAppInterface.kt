@@ -1,18 +1,18 @@
-package com.example.nativewebview2.web
+package com.example.nativewebview2.model
 
 import android.util.Log
 import android.webkit.JavascriptInterface
 import org.json.JSONObject
 
-class MyWebAppInterface {
+class WebAppInterface {
 
-    interface WebAppInterfaceCallback {
+    interface Callback {
         fun finishLoading()
     }
 
-    private var webAppInterfaceCallback: WebAppInterfaceCallback? = null
+    private var webAppInterfaceCallback: Callback? = null
 
-    fun setWebAppInterfaceCallback(callback: WebAppInterfaceCallback?) {
+    fun setWebAppInterfaceCallback(callback: Callback?) {
         webAppInterfaceCallback = callback
     }
 

@@ -1,4 +1,4 @@
-package com.example.nativewebview2.web
+package com.example.nativewebview2.model
 
 import android.graphics.Bitmap
 import android.util.Log
@@ -9,23 +9,17 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
-class MyWebViewClient : WebViewClient() {
-    interface WebViewClientCallback {
+class WebClient(private val callback: Callback) : WebViewClient() {
+    interface Callback {
         fun onPageStarted()
         fun onPageFinished(url: String)
         fun onReceivedError()
     }
 
-    private var webViewCallback: WebViewClientCallback? = null
-
-    fun setWebViewCallback(callback: WebViewClientCallback?) {
-        webViewCallback = callback
-    }
-
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
         Log.d(this.javaClass.simpleName, "onPageStarted: $url")
-        webViewCallback?.onPageStarted()
+        callback.onPageStarted()
     }
 
     override fun onReceivedHttpError(
@@ -51,7 +45,7 @@ class MyWebViewClient : WebViewClient() {
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
         Log.d(this.javaClass.simpleName, "onPageFinished: $url")
-        webViewCallback?.onPageFinished(url ?: "")
+        callback.onPageFinished(url ?: "")
     }
 
     override fun onReceivedError(
@@ -66,10 +60,13 @@ class MyWebViewClient : WebViewClient() {
 
         when (errorCode) {
             ERROR_HOST_LOOKUP -> {
-                webViewCallback?.onReceivedError()
+                callback.onReceivedError()
             }
+
             else -> {
-                Log.e(this.javaClass.simpleName, "onReceivedError: ${error?.description}($errorCode)")
+                Log.e(
+                    this.javaClass.simpleName, "onReceivedError: ${error?.description}($errorCode)"
+                )
             }
         }
 
