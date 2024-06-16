@@ -1,7 +1,6 @@
 package com.example.nativewebview2.clean.infrastructure.presentation.models
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
 import android.os.Handler
@@ -12,11 +11,11 @@ import android.view.WindowInsets
 import android.webkit.WebSettings
 import android.webkit.WebView
 import com.example.nativewebview2.R
+import com.example.nativewebview2.clean.infrastructure.domain.usecases.AndroidDialogMessage
 import com.example.nativewebview2.databinding.ActivityMainBinding
-import com.example.nativewebview2.clean.domain.models.ActionTriggersDM
-import com.example.nativewebview2.clean.domain.usecases.ErrorMessageDU
 
-class WebViewIM(
+
+class AndroidWebViewModel(
     private val context: Context,
     binding: ActivityMainBinding?,
     private val baseUrl: String
@@ -59,16 +58,15 @@ class WebViewIM(
 
     private fun showErrorMessageAndQuit(message: String) {
         stop()
-        val builder = AlertDialog.Builder(context)
-        ErrorMessageDU.show(builder, ActionTriggersDM.finish, message)
+        AndroidDialogMessage.error("Ops...", message)
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     fun start() {
         webView?.let {
-            val webViewClient = WebClientIM(WebClientCallback())
+            val webViewClient = AndroidWebClientModel(WebClientCallback())
             it.addJavascriptInterface(
-                WebAppItfIM(), context.getString(R.string.view_javascript_interface)
+                AndroidWebAppModel(), context.getString(R.string.view_javascript_interface)
             )
             it.settings.javaScriptEnabled = true
             it.settings.domStorageEnabled = true
@@ -116,7 +114,7 @@ class WebViewIM(
         }
     }
 
-    inner class WebClientCallback : WebClientIM.Callback {
+    inner class WebClientCallback : AndroidWebClientModel.Callback {
         override fun onPageStarted() {
             stopWatchdog()
         }

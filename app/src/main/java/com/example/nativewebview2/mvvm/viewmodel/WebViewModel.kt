@@ -5,13 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import com.example.nativewebview2.R
 import com.example.nativewebview2.databinding.ActivityMainBinding
-import com.example.nativewebview2.clean.infrastructure.presentation.models.WebViewIM
+import com.example.nativewebview2.clean.infrastructure.presentation.models.AndroidWebViewModel
 import java.lang.ref.WeakReference
 
 class WebViewModel(context: ComponentActivity, private val callback: Callback) : ViewModel() {
     private val contextRef: WeakReference<ComponentActivity> = WeakReference(context)
     private var binding: ActivityMainBinding? = null
-    private var myWebView: WebViewIM? = null
+    private var myWebView: AndroidWebViewModel? = null
 
     interface Callback {
         fun onWebViewLoaded()
@@ -25,7 +25,7 @@ class WebViewModel(context: ComponentActivity, private val callback: Callback) :
                     Log.d(this.javaClass.simpleName, "Starting ...")
                     binding = ActivityMainBinding.inflate(it.layoutInflater)
 
-                    myWebView = WebViewIM(
+                    myWebView = AndroidWebViewModel(
                         it,
                         binding,
                         it.getString(R.string.base_url)

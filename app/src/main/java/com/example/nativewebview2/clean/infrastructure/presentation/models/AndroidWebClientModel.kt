@@ -9,7 +9,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
-class WebClientIM(private val callback: Callback) : WebViewClient() {
+class AndroidWebClientModel(private val callback: Callback) : WebViewClient() {
     interface Callback {
         fun onPageStarted()
         fun onPageFinished(url: String)

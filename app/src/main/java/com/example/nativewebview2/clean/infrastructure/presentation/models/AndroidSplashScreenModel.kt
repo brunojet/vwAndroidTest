@@ -1,6 +1,5 @@
-package com.example.nativewebview2.clean.domain.models
+package com.example.nativewebview2.clean.infrastructure.presentation.models
 
-import android.app.AlertDialog
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -11,11 +10,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.nativewebview2.R
-import com.example.nativewebview2.clean.domain.usecases.ErrorMessageDU
+import com.example.nativewebview2.clean.infrastructure.domain.usecases.AndroidDialogMessage
 
-class SplashScreenDM(
-    private val context: ComponentActivity,
-    private val text: TextView
+class AndroidSplashScreenModel(
+    private val context: ComponentActivity, private val text: TextView
 ) {
     private val handler = Handler(Looper.getMainLooper())
     private var showSplashScreen by mutableStateOf(false)
@@ -29,11 +27,8 @@ class SplashScreenDM(
                     text.text = context.getString(R.string.splash_count, ssCountUp)
                     handler.postDelayed(this, 1000)
                 } else {
-                    val builder = AlertDialog.Builder(context)
-                    ErrorMessageDU.show(
-                        builder,
-                        ActionTriggersDM.finish,
-                        context.getString(R.string.splash_count_final)
+                    AndroidDialogMessage.error(
+                        "Ops...", context.getString(R.string.splash_count_final)
                     )
                 }
             }

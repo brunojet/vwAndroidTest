@@ -5,18 +5,21 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import com.example.nativewebview2.R
-import com.example.nativewebview2.clean.domain.models.SplashScreenDM
+import com.example.nativewebview2.clean.infrastructure.domain.providers.AndroidContextProvider
+import com.example.nativewebview2.clean.infrastructure.presentation.models.AndroidSplashScreenModel
 import java.lang.ref.WeakReference
 
-class SplashScreenIVM(context: ComponentActivity) : ViewModel() {
-    private val contextRef: WeakReference<ComponentActivity> = WeakReference(context)
-    private var model: SplashScreenDM? = null
+class AndroidSplashScreenViewModel() : ViewModel() {
+    private val contextRef: WeakReference<ComponentActivity> by lazy {
+        WeakReference(AndroidContextProvider.getContext())
+    }
+    private var model: AndroidSplashScreenModel? = null
 
     fun start() {
         contextRef.get()?.let {
             it.setContentView(R.layout.activity_splash)
             val ssCountUpText = it.findViewById<TextView>(R.id.splash_count_up_text)
-            model = SplashScreenDM(it, ssCountUpText)
+            model = AndroidSplashScreenModel(it, ssCountUpText)
             model?.start()
         }
     }

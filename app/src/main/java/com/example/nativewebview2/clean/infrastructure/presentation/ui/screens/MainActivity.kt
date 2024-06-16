@@ -10,17 +10,21 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.ComponentActivity
 import com.example.nativewebview2.R
-import com.example.nativewebview2.clean.domain.models.ActionTriggersDM
-import com.example.nativewebview2.clean.infrastructure.presentation.viewmodel.SplashScreenIVM
-import com.example.nativewebview2.clean.infrastructure.presentation.viewmodel.WebViewIVM
+import com.example.nativewebview2.clean.infrastructure.domain.models.AndroidTrigger
+import com.example.nativewebview2.clean.infrastructure.domain.providers.AndroidContextProvider
+import com.example.nativewebview2.clean.infrastructure.domain.usecases.AndroidDialogMessage
+import com.example.nativewebview2.clean.infrastructure.presentation.viewmodel.AndroidSplashScreenViewModel
+import com.example.nativewebview2.clean.infrastructure.presentation.viewmodel.AndroidWebView
+import com.example.nativewebview2.clean.data.domain.adapters.DialogMessageAdapter
+import com.example.nativewebview2.clean.data.domain.adapters.TriggerAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    private val splashScreenViewModel = SplashScreenIVM(this)
-    private val mainViewModel = WebViewIVM(this)
+    private val splashScreenViewModel = AndroidSplashScreenViewModel()
+    private val mainViewModel = AndroidWebView()
     private val backgroundTimeout = 30000L
     private val finishRunnable = Runnable { finish() }
     private val handler = Handler(Looper.getMainLooper())
@@ -29,12 +33,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         Log.d(this.javaClass.simpleName, "onCreate event")
 
+        AndroidContextProvider.setContext(this)
+        DialogMessageAdapter.set(AndroidDialogMessage)
+        TriggerAdapter.set(AndroidTrigger)
+
         CoroutineScope(Dispatchers.Main).launch {
             val splashJob = async {
-                splashScreenViewModel.start()
+                //splashScreenViewModel.start()
             }
 
             val viewJob = async {
+                mainViewModel.show()
                 mainViewModel.start()
             }
 
@@ -56,7 +65,7 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         Log.d(this.javaClass.simpleName, "onStart event")
 
-        ActionTriggersDM.webViewLoaded.observe(this) {
+        AndroidTrigger.webViewLoaded.observe(this) {
             Log.d(this.javaClass.simpleName, "Received webViewLoaded trigger")
             if (it) {
                 Log.d(this.javaClass.simpleName, "Executing webViewLoaded trigger")
@@ -64,7 +73,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        ActionTriggersDM.finish.observe(this) {
+        AndroidTrigger.finish.observe(this) {
             Log.d(this.javaClass.simpleName, "Received finish trigger")
             if (it) {
                 Log.d(this.javaClass.simpleName, "Executing finish trigger")
@@ -92,7 +101,7 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(this.javaClass.simpleName, "onDestroy event")
-        ActionTriggersDM.removeObservers(this)
+        AndroidTrigger.removeObservers(this)
         splashScreenViewModel.stop()
         mainViewModel.stop()
     }
